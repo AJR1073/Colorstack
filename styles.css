@@ -126,14 +126,17 @@ h1 {
 }
 
 .game-area {
+  position: relative;
   min-height: 0;
   display: grid;
   align-items: end;
   padding-top: 12px;
+  overflow: hidden;
 }
 
 .board {
   position: relative;
+  z-index: 1;
   width: 100%;
   min-height: calc((var(--block-height) + var(--slot-gap)) * var(--capacity) + 120px);
   display: grid;
@@ -297,6 +300,149 @@ h1 {
   color: #ffffff;
 }
 
+.win-panel {
+  width: min(720px, 100%);
+  margin: -8px auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border: 1px solid rgba(31, 122, 117, 0.28);
+  border-radius: 8px;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.92), rgba(255, 253, 247, 0.76)),
+    var(--panel);
+  box-shadow: 0 16px 34px rgba(60, 42, 24, 0.14);
+  padding: 14px 16px;
+}
+
+.win-panel[hidden] {
+  display: none;
+}
+
+.win-panel h2,
+.win-panel p {
+  margin: 0;
+}
+
+.win-panel h2 {
+  font-size: clamp(1.25rem, 3vw, 1.65rem);
+  line-height: 1.1;
+  letter-spacing: 0;
+}
+
+.win-panel #win-summary {
+  margin-top: 5px;
+  color: var(--muted);
+}
+
+.win-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.win-actions button {
+  min-height: 40px;
+  border: 1px solid rgba(36, 29, 23, 0.14);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--ink);
+  padding: 8px 12px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.win-actions button:first-child {
+  background: #143f3d;
+  color: #ffffff;
+}
+
+.reward-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.reward-layer.is-active::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 58px;
+  width: min(540px, 92%);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.78);
+  box-shadow:
+    0 0 0 12px rgba(255, 222, 92, 0.12),
+    0 0 46px rgba(242, 138, 46, 0.35),
+    inset 0 0 34px rgba(32, 182, 165, 0.22);
+  opacity: 0;
+  transform: translateX(-50%) scale(0.22);
+  animation: reward-ring 1200ms ease-out both;
+}
+
+.reward-block,
+.reward-spark {
+  position: absolute;
+  left: var(--start-x);
+  top: var(--start-y);
+  pointer-events: none;
+}
+
+.reward-block {
+  width: clamp(24px, 4vw, 42px);
+  height: clamp(17px, 3vw, 28px);
+  border-radius: 999px / 44%;
+  background:
+    radial-gradient(ellipse at 50% 17%, rgba(255, 255, 255, 0.58), transparent 35%),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.16), transparent 18%, rgba(255, 255, 255, 0.34) 50%, transparent 76%, rgba(0, 0, 0, 0.12)),
+    var(--block-color);
+  box-shadow:
+    inset 0 -6px 8px rgba(0, 0, 0, 0.12),
+    inset 0 3px 5px rgba(255, 255, 255, 0.28),
+    0 10px 18px rgba(45, 30, 18, 0.18);
+  animation: reward-block-flight var(--duration) cubic-bezier(0.16, 0.78, 0.2, 1) var(--delay) both;
+}
+
+.reward-spark {
+  width: var(--spark-size);
+  height: var(--spark-size);
+  border-radius: 50%;
+  background: var(--block-color);
+  box-shadow:
+    0 0 10px var(--block-color),
+    0 0 22px rgba(255, 255, 255, 0.72);
+  animation: reward-spark-flight var(--duration) ease-out var(--delay) both;
+}
+
+.moving-block {
+  position: fixed;
+  left: var(--start-left);
+  top: var(--start-top);
+  z-index: 8;
+  width: var(--move-width);
+  height: var(--move-height);
+  pointer-events: none;
+  border-radius: 999px / 44%;
+  background:
+    radial-gradient(ellipse at 50% 17%, rgba(255, 255, 255, 0.58), transparent 35%),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.16), transparent 18%, rgba(255, 255, 255, 0.34) 50%, transparent 76%, rgba(0, 0, 0, 0.12)),
+    var(--block-color);
+  box-shadow:
+    inset 0 -8px 10px rgba(0, 0, 0, 0.12),
+    inset 0 4px 6px rgba(255, 255, 255, 0.28),
+    0 16px 24px rgba(45, 30, 18, 0.22);
+  animation: moving-block-flight 360ms cubic-bezier(0.18, 0.8, 0.22, 1) both;
+}
+
+.block.is-drop-ghost {
+  visibility: hidden;
+}
+
 .is-won .block {
   animation: settle 540ms ease both;
 }
@@ -332,6 +478,64 @@ h1 {
   }
 }
 
+@keyframes reward-ring {
+  0% {
+    opacity: 0.88;
+    transform: translateX(-50%) scale(0.16);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) scale(1.15);
+  }
+}
+
+@keyframes reward-block-flight {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) translate(0, 0) rotate(0deg) scale(0.7);
+  }
+  10% {
+    opacity: 1;
+  }
+  45% {
+    opacity: 1;
+    transform: translate(-50%, -50%) translate(var(--mid-x), var(--mid-y)) rotate(var(--mid-spin)) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) translate(var(--end-x), var(--end-y)) rotate(var(--end-spin)) scale(0.48);
+  }
+}
+
+@keyframes reward-spark-flight {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) translate(0, 0) scale(0.2);
+  }
+  12% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) translate(var(--end-x), var(--end-y)) scale(0.06);
+  }
+}
+
+@keyframes moving-block-flight {
+  0% {
+    transform: translate(0, 0);
+  }
+  34% {
+    transform: translate(0, var(--lift-y));
+  }
+  72% {
+    transform: translate(var(--move-x), var(--lift-y));
+  }
+  100% {
+    transform: translate(var(--move-x), var(--move-y));
+  }
+}
+
 @media (max-width: 760px) {
   .game-shell {
     min-height: 100vh;
@@ -363,6 +567,16 @@ h1 {
   .score-strip span {
     min-height: 32px;
     padding: 6px 8px;
+  }
+
+  .win-panel {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .win-actions {
+    width: 100%;
+    justify-content: flex-start;
   }
 
   .board {
@@ -421,5 +635,9 @@ h1 {
 
   .controls button {
     width: calc(50% - 8px);
+  }
+
+  .win-actions button {
+    flex: 1 1 130px;
   }
 }

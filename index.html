@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Color Stack</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="game-shell" aria-labelledby="game-title">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Computer puzzle</p>
+          <h1 id="game-title">Color Stack</h1>
+        </div>
+        <div class="score-strip" aria-live="polite">
+          <span>Moves <strong id="move-count">0</strong></span>
+          <span id="solver-status">Ready</span>
+        </div>
+      </header>
+
+      <section class="settings" aria-label="Puzzle settings">
+        <label>
+          <span>Blocks</span>
+          <select id="capacity-select">
+            <option value="4">4 high</option>
+            <option value="5" selected>5 high</option>
+            <option value="6">6 high</option>
+          </select>
+        </label>
+        <label>
+          <span>Colors</span>
+          <select id="color-count-select">
+            <option value="4">4 colors</option>
+            <option value="5">5 colors</option>
+            <option value="6" selected>6 colors</option>
+            <option value="7">7 colors</option>
+            <option value="8">8 colors</option>
+          </select>
+        </label>
+        <label>
+          <span>Empty poles</span>
+          <select id="extra-towers-select">
+            <option value="1" selected>1 pole</option>
+            <option value="2">2 poles</option>
+          </select>
+        </label>
+        <label>
+          <span>Difficulty</span>
+          <select id="difficulty-select">
+            <option value="easy">Easy</option>
+            <option value="normal" selected>Normal</option>
+            <option value="hard">Hard</option>
+            <option value="expert">Expert</option>
+          </select>
+        </label>
+      </section>
+
+      <section class="game-area" aria-label="Color Stack game board">
+        <div id="board" class="board"></div>
+      </section>
+
+      <nav class="controls" aria-label="Game controls">
+        <button id="new-game" type="button">New</button>
+        <button id="undo" type="button">Undo</button>
+        <button id="hint" type="button">Hint</button>
+        <button id="autoplay" type="button">Auto</button>
+      </nav>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>

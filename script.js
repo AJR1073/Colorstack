@@ -2,9 +2,9 @@
 
 const AUTO_DELAY = 360;
 const STORAGE_PREFIX = "colorstack.";
-// Fill these after Google AdSense gives you a publisher ID and ad slot ID.
+// Add a slot ID here after creating a display ad unit in Google AdSense.
 const ADSENSE_CONFIG = {
-  client: "",
+  client: "ca-pub-5616650637352559",
   slot: ""
 };
 

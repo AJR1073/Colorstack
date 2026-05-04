@@ -42,7 +42,7 @@ button {
   width: min(1120px, calc(100vw - 24px));
   min-height: min(760px, calc(100vh - 24px));
   display: grid;
-  grid-template-rows: auto auto 1fr auto;
+  grid-template-rows: auto auto 1fr auto auto;
   gap: 18px;
   padding: clamp(16px, 3vw, 30px);
 }
@@ -298,6 +298,46 @@ h1 {
 .controls button.is-running {
   background: #143f3d;
   color: #ffffff;
+}
+
+.ad-panel {
+  width: min(728px, 100%);
+  min-height: 90px;
+  display: grid;
+  place-items: center;
+  justify-self: center;
+  position: relative;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 253, 247, 0.58);
+  color: var(--muted);
+  overflow: hidden;
+}
+
+.ad-panel span {
+  position: absolute;
+  top: 8px;
+  left: 10px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.ad-panel .adsbygoogle {
+  display: block;
+  width: 100%;
+  min-height: 90px;
+}
+
+.ad-panel.is-placeholder::after {
+  content: "Ad space";
+  color: rgba(113, 102, 91, 0.72);
+  font-weight: 700;
+}
+
+.ad-panel.is-placeholder .adsbygoogle {
+  display: none;
 }
 
 .win-panel {
@@ -635,6 +675,14 @@ h1 {
 
   .controls button {
     width: calc(50% - 8px);
+  }
+
+  .ad-panel {
+    min-height: 74px;
+  }
+
+  .ad-panel .adsbygoogle {
+    min-height: 74px;
   }
 
   .win-actions button {

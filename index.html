@@ -16,6 +16,7 @@
         <div class="score-strip" aria-live="polite">
           <span>Moves <strong id="move-count">0</strong></span>
           <span>Best <strong id="best-score">-</strong></span>
+          <span>Plays <strong id="play-count">0</strong></span>
           <span id="solver-status">Ready</span>
         </div>
       </header>
@@ -92,6 +93,15 @@
         <button id="autoplay" type="button">Auto</button>
         <button id="sound-toggle" type="button" aria-pressed="false">Sound On</button>
       </nav>
+
+      <aside class="ad-panel is-placeholder" aria-label="Advertisement">
+        <span>Advertisement</span>
+        <ins
+          id="adsense-slot"
+          class="adsbygoogle"
+          data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      </aside>
     </main>
 
     <script src="script.js"></script>

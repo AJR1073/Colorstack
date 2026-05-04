@@ -2,6 +2,11 @@
 
 const AUTO_DELAY = 360;
 const STORAGE_PREFIX = "colorstack.";
+// Fill these after Google AdSense gives you a publisher ID and ad slot ID.
+const ADSENSE_CONFIG = {
+  client: "",
+  slot: ""
+};
 
 const COLORS = [
   { name: "purple", hex: "#a653bf" },
@@ -99,6 +104,7 @@ const boardEl = document.querySelector("#board");
 const rewardLayerEl = document.querySelector("#reward-layer");
 const moveCountEl = document.querySelector("#move-count");
 const bestScoreEl = document.querySelector("#best-score");
+const playCountEl = document.querySelector("#play-count");
 const statusEl = document.querySelector("#solver-status");
 const newButton = document.querySelector("#new-game");
 const undoButton = document.querySelector("#undo");
@@ -114,6 +120,8 @@ const winPanelEl = document.querySelector("#win-panel");
 const winSummaryEl = document.querySelector("#win-summary");
 const winNewGameButton = document.querySelector("#win-new-game");
 const winHarderButton = document.querySelector("#win-harder");
+const adPanelEl = document.querySelector(".ad-panel");
+const adsenseSlotEl = document.querySelector("#adsense-slot");
 
 let towers = [];
 let selectedTower = null;
@@ -174,6 +182,42 @@ function writeStoredValue(key, value) {
   try {
     storage.setItem(`${STORAGE_PREFIX}${key}`, value);
   } catch (error) {}
+}
+
+function getPlayCount() {
+  const stored = Number(readStoredValue("playCount"));
+  return Number.isFinite(stored) && stored > 0 ? stored : 0;
+}
+
+function updatePlayCountDisplay() {
+  playCountEl.textContent = String(getPlayCount());
+}
+
+function incrementPlayCount() {
+  const nextCount = getPlayCount() + 1;
+  writeStoredValue("playCount", String(nextCount));
+  playCountEl.textContent = String(nextCount);
+}
+
+function hasAdSenseConfig() {
+  return ADSENSE_CONFIG.client.startsWith("ca-pub-") && ADSENSE_CONFIG.slot.length > 0;
+}
+
+function setupAdSense() {
+  if (!adsenseSlotEl || !adPanelEl || !hasAdSenseConfig()) return;
+
+  adPanelEl.classList.remove("is-placeholder");
+  adsenseSlotEl.dataset.adClient = ADSENSE_CONFIG.client;
+  adsenseSlotEl.dataset.adSlot = ADSENSE_CONFIG.slot;
+
+  const script = document.createElement("script");
+  script.async = true;
+  script.crossOrigin = "anonymous";
+  script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(ADSENSE_CONFIG.client)}`;
+  document.head.append(script);
+
+  window.adsbygoogle = window.adsbygoogle || [];
+  window.adsbygoogle.push({});
 }
 
 function makeSeededRandom(seed) {
@@ -459,6 +503,7 @@ function renderBoard() {
 
   moveCountEl.textContent = String(moveCount);
   updateBestScoreDisplay();
+  updatePlayCountDisplay();
   undoButton.disabled = history.length === 0 || isAutoplaying;
   hintButton.disabled = isSolvedState(towers) || isAutoplaying;
   autoplayButton.disabled = isSolvedState(towers);
@@ -1224,6 +1269,7 @@ function newGame() {
   history = [];
   moveLog = [];
   usedAutoplay = false;
+  incrementPlayCount();
   clearHint();
   clearSolutionCache();
   cachedSolution = { key: solutionCacheKey(towers), path: initialSolution.slice() };
@@ -1279,4 +1325,5 @@ difficultySelect.addEventListener("change", startRandomGameFromControls);
 
 syncSettingsFromControls();
 updateSoundButton();
+setupAdSense();
 newGame();
